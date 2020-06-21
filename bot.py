@@ -56,6 +56,7 @@ def url(update, context):
             ig.login()
             media = ig.get_media_by_url(url)
         except InstagramNotFoundException:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=f"{TREX_EMOJI} {message}", disable_web_page_preview=True)
             context.bot.send_message(chat_id=update.effective_chat.id, text="Media with given code does not exist or account is private.")
             return
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"{TREX_EMOJI} {message}", disable_web_page_preview=True)
