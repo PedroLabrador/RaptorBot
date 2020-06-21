@@ -9,6 +9,7 @@ from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler
 from igramscraper.instagram import Instagram
 from igramscraper.exception import InstagramException
+from igramscraper.exception import InstagramNotFoundException
 from emojis import TREX_EMOJI
 
 
@@ -46,6 +47,7 @@ def lyrics(update, context):
 def url(update, context):
     message = update.message.text
     if 'instagram' in message:
+        context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
         url = message.split("?", 1)[0]
         try:
             media = ig.get_media_by_url(url)
@@ -53,6 +55,10 @@ def url(update, context):
             logging.info("Cookies expired, logging in..")
             ig.login()
             media = ig.get_media_by_url(url)
+        except InstagramNotFoundException:
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Media with given code does not exist or account is private.")
+            return
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"{TREX_EMOJI} {message}", disable_web_page_preview=True)
         context.bot.send_video(chat_id=update.effective_chat.id, video=media.video_standard_resolution_url)
 
 
