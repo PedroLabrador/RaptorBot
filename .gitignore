@@ -1,0 +1,5 @@
+.env
+.raptor
+__pycache__
+.vscode
+ig_sessions
